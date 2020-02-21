@@ -21,13 +21,13 @@ Gmailの読み込みやラベル付加を行うLambda
 
 ### インストール
 #### DynamoDB
-トークンはDynamoDBのものを読み書きするので、あらかじめOAuth認証を済ませて次のような形のレコードをDynamoDBに入れておく。
+トークンはDynamoDBのレコードに保存するので、あらかじめOAuth認証を済ませて次のような形のレコードをDynamoDBに入れておく。
 
 テーブル名は既存のものが使い回せるが、文字型のプライマリキーが1個だけある（このキーだけでレコードが特定できる）ことが条件。
 
 ```json
 {
-  "Key": "UNIQUE-KEY", // プライマリキー（キー名はこれ以外でもよい）
+  "Key": "UNIQUE-KEY", // プライマリキー（キー名は Key でなくてもよい）
   "Account": "user@example.com", // 認証を行ったアカウント名。ログ等に出力される
   "Data": {
     "access_token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
