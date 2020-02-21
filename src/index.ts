@@ -1,13 +1,20 @@
 // gmail client
 // https://github.com/sanwasystem/gmail_client
 
-require("dotenv").config();
-
 import getClient from "./getClient";
+import refreshToken from "./refreshToken";
 
 exports.handler = async (event: any) => {
+  if (event.action === undefined) {
+    // actionが指定されていなかったらトークンを更新する
+    return await refreshToken();
+  }
+
   console.log(event);
-  const client = await getClient();
+  if (event.key !== undefined && typeof event.key !== "string") {
+    return Promise.reject("'key' must be undefined or string");
+  }
+  const client = await getClient(event.key);
 
   switch (event.action) {
     case "search":
@@ -24,7 +31,7 @@ exports.handler = async (event: any) => {
       return await client.getRawMailById(event.messageId);
     default:
       return Promise.reject(
-        new Error("action must be either 'search', 'searchEx', 'addLabels', 'allLabels', 'rawMessage' or 'message'")
+        "'action' must be either undefined, 'search', 'searchEx', 'addLabels', 'allLabels', 'rawMessage' or 'message'"
       );
   }
 };

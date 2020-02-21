@@ -1,9 +1,7 @@
-import getClient from "../getClient";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const _module = require("../index");
 
-const func = async () => {
-  const client = await getClient();
-  const result = await client.getLabels();
-  console.log(JSON.stringify(result, null, 2));
-};
-
-func();
+(async () => {
+  const result = await _module.handler({ action: "allLabels" });
+  console.log(result);
+})();

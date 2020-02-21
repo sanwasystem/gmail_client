@@ -3,6 +3,22 @@ gmail_client
 
 Gmailの読み込みやラベル付加を行うLambda
 
+### 引数
+* `key` でDynamoDBのレコードのプライマリキーを指定する。指定しなかった場合は環境変数のデフォルト値を利用する。
+* `action` に以下のいずれかの値を指定する。指定しなかった場合はDynamoDB上のトークンを更新する。
+
+|`action` の値  | 処理内容                                                   |
+|--------------|------------------------------------------------------------|
+| なし(undefined) | DynamoDB上に存在するレコードを全件検索し、トークンを更新する |
+| `search`     | `condition` の条件でメールを検索し、メッセージIDを返す         |
+| `searchEx`   | `condition` の条件でメールを検索し、メールの内容を返す。30件を超えた場合はエラーになる |
+| `addLabels`  | `messageId` で与えたメールに `labelIds` で与えたラベルを追加する。 `labelIds` は文字列または文字列の配列 |
+| `allLabels`  | そのアカウントに存在するラベルを返す                           |
+| `message`    | `messageId` で与えたメールの内容を返す                       |
+| `rawMessage` | `messageId` で与えたメールの内容を返す。テスト用              |
+
+`condition` にはGmailの検索条件がそのまま使える。 `after:2020-02-21 label:UNREAD` など。
+
 ### インストール
 #### DynamoDB
 トークンはDynamoDBのものを読み書きするので、あらかじめOAuth認証を済ませて次のような形のレコードをDynamoDBに入れておく。
