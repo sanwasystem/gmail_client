@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DynamoDBRecord = {
   /**
-   * このレコードを一意に特定する文字列
-   */
-  Key: string;
-  /**
    * この認証はどのアカウントで行われたかを書いておく。実際の処理には使われない
    */
   Account: string;
@@ -31,9 +27,6 @@ export type DynamoDBRecord = {
 
 export const isDynamoDBRecord = (arg: any): arg is DynamoDBRecord => {
   if (arg === null || typeof arg !== "object") {
-    return false;
-  }
-  if (typeof arg.Key !== "string") {
     return false;
   }
   if (typeof arg.Account !== "string") {

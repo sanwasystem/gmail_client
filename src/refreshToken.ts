@@ -8,7 +8,8 @@ const dynamo = new AWS.DynamoDB.DocumentClient({ region: env.defaultRegion });
 
 const refreshToken = async (): Promise<boolean> => {
   let failCount = 0;
-  const records = await toolbox.dynamo.getAllRecords(dynamo, env.dynamoDbTableName, Types.isDynamoDBRecord);
+  const allRecords = await toolbox.dynamo.getAllRecords(dynamo, env.dynamoDbTableName);
+  const records = allRecords.filter<Types.DynamoDBRecord>(Types.isDynamoDBRecord);
   console.log(`DynamoDBから${records.length}件のレコードを取得しました。トークンを更新します`);
   for (const record of records) {
     const credential = record.Data;
@@ -20,7 +21,7 @@ const refreshToken = async (): Promise<boolean> => {
         refreshToken: credential.refresh_token
       })
       .catch(reason => {
-        console.error(`${record.Key}(${record.Account})の更新に失敗しました: ${reason}`);
+        console.error(`${record.Account} の更新に失敗しました: ${reason}`);
         failCount++;
       });
 
@@ -28,11 +29,13 @@ const refreshToken = async (): Promise<boolean> => {
       const newRecord = { ...record };
       newRecord.Timestamp = new Date().toISOString();
       newRecord.Data.access_token = newToken;
-      await dynamo.put({
-        TableName: env.dynamoDbTableName,
-        Item: newRecord
-      });
-      console.log(`${record.Key}(${record.Account})の更新を行いました`);
+      await dynamo
+        .put({
+          TableName: env.dynamoDbTableName,
+          Item: newRecord
+        })
+        .promise();
+      console.log(`${record.Account}の更新を行いました`);
     }
   }
   if (failCount > 0) {
