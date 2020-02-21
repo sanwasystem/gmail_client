@@ -4,7 +4,9 @@ gmail_client
 Gmailの読み込みやラベル付加を行うLambda
 
 ### インストール
-トークンはDynamoDBに入っていることを前提としている。次のような形のレコードをDynamoDBに入れておく。
+#### DynamoDB
+トークンはDynamoDBのものを読み書きするので、あらかじめOAuth認証を済ませて次のような形のレコードをDynamoDBに入れておく。
+
 テーブル名は既存のものが使い回せるが、文字型のプライマリキーが1個だけある（このキーだけでレコードが特定できる）ことが条件。
 
 ```json
@@ -22,12 +24,14 @@ Gmailの読み込みやラベル付加を行うLambda
   "Service": "Google" // 固定値
 }
 ```
+#### Lambda
+普通に作成して上述のDynamoDBへの読み書き権限を与えておく。
 
-#### 環境変数
+##### 環境変数
 * `DynamoDbTableName`: 上述のDynamoDBのテーブル名
 * `DynamoDbTableKeyName`: 上述のDynamoDBのテーブルのプライマリキー名
 * `defaultKeyValue`: プライマリキーの値（引数で指定されなかった場合に利用される）
 * `defaultRegion`: `ap-northeast-1` とか
 
-#### 処理内容
+### 処理内容
 [gmail-api-client](https://github.com/sanwasystem/gmail-api-client) を呼び出しているだけなので詳細はこちらを参照。
