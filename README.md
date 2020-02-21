@@ -41,7 +41,7 @@ Gmailの読み込みやラベル付加を行うLambda
 }
 ```
 #### Lambda
-普通に作成して上述のDynamoDBへの読み書き権限を与えておく。
+ロールに上述のDynamoDBへの読み書き権限（ `dynamodb:PutItem`,`dynamodb:Query`, `dynamodb:Scan` ）を与えておく。
 
 ##### 環境変数
 * `DynamoDbTableName`: 上述のDynamoDBのテーブル名
@@ -49,5 +49,9 @@ Gmailの読み込みやラベル付加を行うLambda
 * `defaultKeyValue`: プライマリキーの値（引数で指定されなかった場合に利用される）
 * `defaultRegion`: `ap-northeast-1` とか
 
-### 処理内容
+#### CloudWatch
+トークンには有効期限があり、一定時間おきに更新する必要がある。
+このLambdaは自動的には更新を行わないので、必要に応じて一定時間おきに引数なしで実行するようにしておく。
+
+### 認証関係
 [gmail-api-client](https://github.com/sanwasystem/gmail-api-client) を呼び出しているだけなので詳細はこちらを参照。
